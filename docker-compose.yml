@@ -20,3 +20,13 @@ services:
       AWS_SECRET_ACCESS_KEY: local
     depends_on:
       - dynamodb-local
+
+  # go-backend:
+  #   image: cosmtrek/air
+  #   working_dir: /app
+  #   ports:
+  #     - 8080:8080
+  #   volumes:
+  #     - .:/app
+  #     - /app/tmp
+  #   command: ["air", "-c", ".air.toml"]

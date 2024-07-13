@@ -1,14 +1,16 @@
 package main
 
 import (
+	_ "backend/cmd/env"
 	"backend/internal/repository"
 	"backend/internal/repository/dbrepo"
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 )
 
-const port = 8800
+const port = 8080
 
 type application struct {
 	DataSource string
@@ -20,6 +22,12 @@ func main() {
 	//set application config
 	var app application
 
+	//access env
+	envPort := os.Getenv("PORT")
+	if envPort == "" {
+		log.Fatal("PORT is not set")
+	}
+
 	//connect to the database
 	client, err := app.connectToDynamoDB()
 	if err != nil {
@@ -28,6 +36,7 @@ func main() {
 	app.DB = dbrepo.DynamoDBRepo{DB: client}
 
 	log.Println("Starting Application on port: ", port)
+	log.Println("ENV port: ", envPort)
 
 	//start a web server
 	err = http.ListenAndServe(fmt.Sprintf(":%d", port), app.routes())

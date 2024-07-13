@@ -1,12 +1,15 @@
 package main
 
 import (
+	"backend/cmd/api/valo"
 	"backend/internal/models"
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
+	"os"
 	"strings"
 	"time"
 
@@ -28,7 +31,7 @@ func (app *application) dummyJson(w http.ResponseWriter, r *http.Request) {
 		Version string `json:"version"`
 	}{
 		Status:  "active",
-		Message: "Go Farrel backend",
+		Message: "Go Farrel backend nichh22",
 		Version: "1.0.0alpha",
 	}
 
@@ -264,10 +267,90 @@ func (app *application) LocalGetAllMovies(w http.ResponseWriter, r *http.Request
 	log.Println("Finished Get all local movies DynamoDB ")
 }
 
+func (app *application) getValoAccount(w http.ResponseWriter, r *http.Request) {
+	// create an http client
+	client := &http.Client{}
+
+	// GET ACCOUNT DETAILS===================================================================================
+	url := os.Getenv("VALO_DEFAULT_ENDPOINT") + "v1/by-puuid/account/" + os.Getenv("VALO_SECOND_ACCOUNT_PUUID")
+	// create request
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		fmt.Printf("Could not create request: %v", err)
+		return
+	}
+
+	//set Headers
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", os.Getenv("VALO_API_KEY"))
+
+	// make request hit endpoint
+	resp, err := client.Do(req)
+	if err != nil {
+		fmt.Printf("could not make request: %v", err)
+		return
+	}
+
+	// check resp satus code
+	if resp.StatusCode != http.StatusOK {
+		fmt.Printf("Received Non 200 response: %d", resp.StatusCode)
+		return
+	}
+
+	//read response body
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		fmt.Printf("Error Read response body: %v", err)
+		return
+	}
+
+	// convert to string
+	jsonBody := string(body)
+
+	// convert
+	var response map[string]interface{}
+	err = json.Unmarshal([]byte(jsonBody), &response)
+	if err != nil {
+		fmt.Println("JSON Parse Error", err)
+		return
+	}
+
+	// fmt.Printf("body type: %T", body)
+	// literal data object
+	data := response["data"].(map[string]interface{})
+	fmt.Println("res: ", data["puuid"])
+
+	// construct new valotracker
+	// acc := new(models.ValoTracker)
+
+	// GET MMR DETAIL===================================================================================
+	// store highest peak in season
+
+	// ===================================================================================
+
+	if err := json.NewEncoder(w).Encode(data); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+
+}
+
+func (app *application) getAccountDetail(w http.ResponseWriter, r *http.Request) {
+	data, err := valo.FetchMMRInfo()
+	if err != nil {
+		fmt.Printf("failed to fetchAccDetail: %v", err)
+		return
+	}
+
+	if err := json.NewEncoder(w).Encode(data); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
 func (app *application) LocalPutMovie(w http.ResponseWriter, r *http.Request) {
-
 	//VALIDATOR
-
 	//Content Type validator
 	ct := r.Header.Get("Content-Type")
 	if ct != "" {

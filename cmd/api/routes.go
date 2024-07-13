@@ -23,6 +23,9 @@ func (app *application) routes() http.Handler {
 
 	mux.Post("/addmovie", app.LocalPutMovie)
 
+	// mux.Get("/v1/getvalo", app.getValoAccount)
+	mux.Get("/v1/getvalo", app.getAccountDetail)
+
 	// mux.Route("/movies", func(r chi.Router) {
 	// 	r.Use(middleware.Recoverer)
 	// 	r.Use(middleware.Logger)
