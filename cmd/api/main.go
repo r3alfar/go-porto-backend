@@ -35,11 +35,11 @@ func main() {
 	}
 	app.DB = dbrepo.DynamoDBRepo{DB: client}
 
-	log.Println("Starting Application on port: ", port)
+	log.Println("Starting Application on port: ", envPort)
 	log.Println("ENV port: ", envPort)
 
 	//start a web server
-	err = http.ListenAndServe(fmt.Sprintf(":%d", port), app.routes())
+	err = http.ListenAndServe(fmt.Sprintf(":%v", envPort), app.routes())
 	if err != nil {
 		log.Fatal(err)
 	}

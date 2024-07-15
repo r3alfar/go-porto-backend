@@ -25,6 +25,7 @@ func (app *application) routes() http.Handler {
 
 	// mux.Get("/v1/getvalo", app.getValoAccount)
 	mux.Get("/v1/getvalo", app.getAccountDetail)
+	mux.Get("/v1/populateValo", app.populateData)
 
 	// mux.Route("/movies", func(r chi.Router) {
 	// 	r.Use(middleware.Recoverer)

@@ -338,15 +338,53 @@ func (app *application) getValoAccount(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) getAccountDetail(w http.ResponseWriter, r *http.Request) {
-	data, err := valo.FetchMMRInfo()
+	res, err := valo.FetchAccDetail()
 	if err != nil {
 		fmt.Printf("failed to fetchAccDetail: %v", err)
 		return
 	}
 
-	if err := json.NewEncoder(w).Encode(data); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+	// fmt.Printf("---------data: \n %v", data["data"].(map[string]interface{})["account_level"])
+	var acc models.AccountDetail
+	err = json.Unmarshal(res, &acc)
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
 	}
+
+	fmt.Println("Account level: ", acc.Data.AccountLevel)
+	fmt.Println("Card Wide Url: ", acc.Data.Card.Wide)
+
+	//write response of api call
+	out, err := json.Marshal(acc)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	w.Write(out)
+	// if err := json.NewEncoder(w).Encode(data); err != nil {
+	// 	http.Error(w, err.Error(), http.StatusInternalServerError)
+	// }
+}
+
+func (app *application) populateData(w http.ResponseWriter, r *http.Request) {
+	var res valo.FuncRes
+	res = valo.InitialGrab()
+
+	// marshal struct into JSON
+	jsonBytes, err := json.Marshal(res)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	w.WriteHeader(http.StatusOK)
+	w.Write(jsonBytes)
+
+	// if err := json.NewEncoder(w).Encode(data); err != nil {
+	// 	http.Error(w, err.Error(), http.StatusInternalServerError)
+	// }
 }
 
 func (app *application) LocalPutMovie(w http.ResponseWriter, r *http.Request) {
