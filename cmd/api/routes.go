@@ -16,8 +16,9 @@ func (app *application) routes() http.Handler {
 
 	mux.Get("/", app.dummyJson)
 
-	mux.Get("/v1/dummyMovies", app.AllMovies)
-	mux.Get("/v1/dynamoMovies", app.DynamoDbCreateItemDummy)
+	// mux.Get("/v1/dummyMovies", app.AllMovies)
+	// hit to production dynamodbcreateitemdummy
+	// mux.Get("/v1/dynamoMovies", app.DynamoDbCreateItemDummy)
 	mux.Get("/v1/localMovies", app.LocalDBCreateItem)
 	mux.Get("/local/getAllMovies", app.LocalGetAllMovies)
 

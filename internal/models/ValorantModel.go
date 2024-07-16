@@ -21,46 +21,50 @@ type AccountDetail struct {
 }
 
 type Matchlist struct {
-	Metadata struct {
-		Map        string `json:"map"`
-		GameLength string `json:"game_length"`
-		GameStart  string `json:"game_start"`
-		MatchId    string `json:"matchid"`
-		Mode       string `json:"mode"`
-		Region     string `json:"region"`
-		Cluster    string `json:"cluster"`
-	} `json:"metadata"`
-	Players struct {
-		AllPlayers []struct {
-			PUUID       string `json:"puuid"`
-			Name        string `json:"name"`
-			Tag         string `json:"tag"`
-			Team        string `json:"team"`
-			Character   string `json:"character"`
-			CurrentTier string `json:"currenttier_patched"`
-			Assets      struct {
-				Card struct {
-					Wide string `json:"wide"`
-				} `json:"card"`
-				Agent struct {
-					Killfeed string `json:"killfeed"`
-				} `json:"agent"`
-			} `json:"assets"`
-			Stats struct {
-				Score     int `json:"score"`
-				Kills     int `json:"kills"`
-				Deaths    int `json:"deaths"`
-				Assists   int `json:"assists"`
-				Bodyshots int `json:"bodyshots"`
-				Headshots int `json:"headshots"`
-				Legshots  int `json:"legshots"`
-			}
-		} `json:"all_players"`
-	} `json:"players"`
-	Teams struct {
-		Red  TeamStruct `json:"red"`
-		Blue TeamStruct `json:"blue"`
-	} `json:"teams"`
+	Status int `json:"status"`
+	Data   []struct {
+		Metadata struct {
+			Map        string `json:"map"`
+			GameLength int    `json:"game_length"`
+			GameStart  int    `json:"game_start"`
+			MatchId    string `json:"matchid"`
+			Mode       string `json:"mode"`
+			Region     string `json:"region"`
+			Cluster    string `json:"cluster"`
+		} `json:"metadata"`
+		Players struct {
+			AllPlayers []struct {
+				PUUID         string `json:"puuid"`
+				Name          string `json:"name"`
+				Tag           string `json:"tag"`
+				Team          string `json:"team"`
+				Character     string `json:"character"`
+				CurrentTier   string `json:"currenttier_patched"`
+				CurrentTierId int    `json:"currenttier"`
+				Assets        struct {
+					Card struct {
+						Wide string `json:"wide"`
+					} `json:"card"`
+					Agent struct {
+						Killfeed string `json:"killfeed"`
+					} `json:"agent"`
+				} `json:"assets"`
+				Stats struct {
+					Score     int `json:"score"`
+					Kills     int `json:"kills"`
+					Deaths    int `json:"deaths"`
+					Assists   int `json:"assists"`
+					Bodyshots int `json:"bodyshots"`
+					Headshots int `json:"headshots"`
+					Legshots  int `json:"legshots"`
+				}
+			} `json:"all_players"`
+		} `json:"players"`
+		Teams struct {
+			Red  TeamStruct `json:"red"`
+			Blue TeamStruct `json:"blue"`
+		} `json:"teams"`
+	} `json:"data"`
 }
 
 type TeamStruct struct {
@@ -70,28 +74,40 @@ type TeamStruct struct {
 }
 
 type MMR struct {
-	Name        string `json:"name"`
-	Tag         string `json:"Tag"`
-	HighestRank struct {
-		Tier        int    `json:"tier"`
-		PatchedTier string `json:"patched_tier"`
-		Season      string `json:"season"`
-	} `json:"highest_rank"`
+	Status int `json:"status"`
+	Data   struct {
+		Name        string `json:"name"`
+		Tag         string `json:"Tag"`
+		HighestRank struct {
+			Tier        int    `json:"tier"`
+			PatchedTier string `json:"patched_tier"`
+			Season      string `json:"season"`
+		} `json:"highest_rank"`
+		CurrentData struct {
+			CurrentTierID int    `json:"currenttier"`
+			CurrentTier   string `json:"currenttierpatched"`
+			Images        struct {
+				TierIconURL string `json:"small"`
+			} `json:"images"`
+		} `json:"current_data"`
+	} `json:"data"`
 }
 
 type MMRHistory struct {
-	Tier      string `json:"currenttierpatched"`
-	TierId    string `json:"currenttier"`
-	MatchId   string `json:"match_id"`
-	MMRChange int    `json:"mmr_change_to_last_game"`
-	DateRaw   int    `json:"date_raw"`
-	Map       struct {
-		Name  string `json:"name"`
-		MapId string `json:"id"`
-	} `json:"map"`
-	Images struct {
-		Small string `json:"small"`
-	} `json:"images"`
+	Data []struct {
+		Tier      string `json:"currenttierpatched"`
+		TierId    int    `json:"currenttier"`
+		MatchId   string `json:"match_id"`
+		MMRChange int    `json:"mmr_change_to_last_game"`
+		DateRaw   int    `json:"date_raw"`
+		Map       struct {
+			Name  string `json:"name"`
+			MapId string `json:"id"`
+		} `json:"map"`
+		Images struct {
+			Small string `json:"small"`
+		} `json:"images"`
+	} `json:"data"`
 }
 
 type MapDetail struct {
